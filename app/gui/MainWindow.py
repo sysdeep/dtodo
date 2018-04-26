@@ -2,25 +2,14 @@
 # -*- coding: utf-8 -*-
 
 import logging
-from queue import Queue
 
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QStyleFactory, QWidget, QHBoxLayout, QPushButton, QVBoxLayout, QTabWidget, QLineEdit
 from PyQt5.QtGui import QIcon, QFontDatabase
 from PyQt5.QtCore import QTimer, pyqtSignal
 
 
-# from ms3.net.PyTCP import ClientTcp
-# from ms3.net.QReader import QReader
-# from ms3.rc import get_font_path
-# from ms3.shared import get_user
-# from ms3.bus import dbus
-# from ms3.data import def_ui
-# from ms3.gui.modals.help_viewer import get_error_view
-# from ms3.gui.system.req_res_modal import ReqResModal
-# from ms3.gui.system.ModalInfoData import ModalInfoData
 
 from .TasksList import TaskList
-from .TasksControls import TaskControls
 from .ModalEditTodo import ModalEditTodo
 from .SystemTray import SystemTray
 from .BarMenu import BarMenu

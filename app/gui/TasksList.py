@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtWidgets import QLabel, QGridLayout, QWidget, QHBoxLayout, QListWidget, QListWidgetItem, QVBoxLayout, QAction
+from PyQt5.QtWidgets import QLabel, QGridLayout, QWidget, QHBoxLayout, QListWidget, QListWidgetItem, QVBoxLayout, QAction, QMenu
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, pyqtSignal
 
@@ -28,7 +28,40 @@ class TaskList(QWidget):
 
 		self.current_item_id = ""
 
-		self.__make_cmenu()
+		# self.__make_cmenu()
+		self.list.contextMenuEvent = self.show_cmenu
+
+
+	def show_cmenu(self, event):
+
+		menu = QMenu()
+
+		edit 	= QAction("Изменить", self)
+		edit.setIcon(QIcon(get_icon("edit.png")))
+
+
+
+		remove 	= QAction("Удалить", self)
+		remove.setIcon(QIcon(get_icon("delete.png")))
+
+		menu.addAction(edit)
+		menu.addSeparator()
+		menu.addAction(remove)
+		menu.addSeparator()
+
+		statuses 	= QMenu("Статусы")
+		menu.addMenu(statuses)
+
+		action = menu.exec_(event.globalPos())
+		# action = menu.exec_(event)
+
+
+		if action == edit:
+			self.show_edit()
+		elif action == remove:
+			self.show_remove()
+		else:
+			pass
 
 
 
@@ -41,6 +74,10 @@ class TaskList(QWidget):
 
 		remove 	= QAction("Удалить", self.list)
 		remove.setIcon(QIcon(get_icon("delete.png")))
+
+
+		# statuses 	= QMenu("Статусы", self.list)
+
 		# create_new_parent 	= QAction("Новая запись для данного элемента", self)
 		# create_new_level 	= QAction("Новая запись такого же уровня", self)
 		#
@@ -65,6 +102,7 @@ class TaskList(QWidget):
 		# separator3.setSeparator(True)
 
 		self.list.addAction(edit)
+		# self.list.addMenu(statuses)
 		self.list.addAction(separator1)
 		self.list.addAction(remove)
 		# self.addAction(create_new_parent)
