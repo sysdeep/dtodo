@@ -28,7 +28,7 @@ class Store(object):
 
 	def open(self, db_path):
 		self.db_path = db_path
-		
+
 		if not os.path.exists(db_path):
 			self.save()
 			return False
