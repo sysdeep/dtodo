@@ -12,13 +12,13 @@ class TaskControls(QWidget):
 		super(TaskControls, self).__init__(parent)
 
 		self.main_layout = QVBoxLayout(self)
-		self.list = QListWidget()
 
-		self.main_layout.addWidget(self.list)
-
-
-		item = QListWidgetItem("controls")
-		self.list.addItem(item)
+		# self.list = QListWidget()
+		# self.main_layout.addWidget(self.list)
+		#
+		#
+		# item = QListWidgetItem("controls")
+		# self.list.addItem(item)
 
 
 		controls = QHBoxLayout()
@@ -30,6 +30,8 @@ class TaskControls(QWidget):
 
 		controls.addWidget(btn_add)
 
+
+		self.main_layout.addStretch()
 
 
 

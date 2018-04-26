@@ -4,8 +4,8 @@
 import logging
 from queue import Queue
 
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QStyleFactory, QWidget, QHBoxLayout
-from PyQt5.QtGui import QFontDatabase
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QStyleFactory, QWidget, QHBoxLayout, QPushButton, QVBoxLayout, QTabWidget
+from PyQt5.QtGui import QIcon, QFontDatabase
 from PyQt5.QtCore import QTimer, pyqtSignal
 
 
@@ -22,8 +22,11 @@ from PyQt5.QtCore import QTimer, pyqtSignal
 from .TasksList import TaskList
 from .TasksControls import TaskControls
 from .ModalEditTodo import ModalEditTodo
+from .SystemTray import SystemTray
 
 from ..storage import get_store
+from ..rc import get_media
+from .. import data
 
 log = logging.getLogger("main")
 
@@ -42,8 +45,8 @@ class MainWindow(QMainWindow):
 		self.title 		= "DTodo"
 
 		#--- размеры
-		self.max_x = 800
-		self.max_y = 600
+		self.max_x = 600
+		self.max_y = 400
 
 		#--- стиль окна
 		# self.wstyle = ""
@@ -61,16 +64,18 @@ class MainWindow(QMainWindow):
 		# QFontDatabase.addApplicationFont(get_font_path("roboto", "RobotoMono-Regular.ttf"))
 
 
-		#--- FEATURES... ------------------------------------------------------
+
 		#--- system tray
-		#--- !!! KDE-error - при закрытии MainWindow трей остаётся висеть... и приложение не останавливается....
-		#--- сейчас нагрузки на него нет - пока отключаем
-		# tray = SystemTray(self)
-		# tray.show()
+		tray_icon = QIcon(get_media("tray.png"))
+		tray = SystemTray(tray_icon, parent=self)
+		tray.show()
 
 
 		self.modal_edit_todo = None
+		self.edit_todo_is_new = False
 		self.store = get_store()
+		self.tabs_map = {}						# {status_code: widget}
+		self.current_status_code = 0
 
 		self.init_gui()
 		self.set_todo_items()
@@ -98,23 +103,42 @@ class MainWindow(QMainWindow):
 		self.main_widget = QWidget()
 		self.setCentralWidget(self.main_widget)
 
-		self.main_layout = QHBoxLayout()
+		self.main_layout = QVBoxLayout()
+		# self.main_layout.setContentsMargins(0,0,0,0)
 		self.main_widget.setLayout(self.main_layout)
 
 
-		self.tasks_list = TaskList()
-		self.tasks_controls = TaskControls()
-		self.tasks_controls.setMaximumWidth(200)
-		self.tasks_controls.eadd.connect(self.show_add_todo)
 
-		self.main_layout.addWidget(self.tasks_controls)
-		self.main_layout.addWidget(self.tasks_list)
+		self.tabs = QTabWidget()
+		self.tabs.currentChanged.connect(self.on_tab_changed)
+		self.main_layout.addWidget(self.tabs)
 
-		# self.init_central_gui()
+		for st in sorted(data.TODO_STATUSES.keys()):
+			todo_list = TaskList()
+			self.tabs_map[st] = todo_list
+			todo_list.eedit.connect(self.show_edit_todo)
+			todo_list.status_code = st
+			todo_list.status_text = data.TODO_STATUSES[st]
+			self.tabs.addTab(todo_list, todo_list.get_name())
+
+
+
+		controls = QHBoxLayout()
+		self.main_layout.addLayout(controls)
+
+		btn_quit = QPushButton("quit")
+		btn_quit.clicked.connect(self.act_exit)
+
+		btn_add = QPushButton("Add")
+		btn_add.clicked.connect(self.show_add_todo)
+
+		controls.addStretch()
+		controls.addWidget(btn_add)
+		controls.addWidget(btn_quit)
 
 
 		#--- status bar
-		self.statusBar().showMessage('')
+		# self.statusBar().showMessage('')
 
 		self.show()
 
@@ -126,20 +150,56 @@ class MainWindow(QMainWindow):
 
 
 	def set_todo_items(self):
-		self.tasks_list.set_items(self.store.items)
+
+		for w in self.tabs_map.values():
+			w.clear_list()
+
+		for item in self.store.items:
+			st = item.status
+			w = self.tabs_map[st]
+			w.append_item(item)
+
+		# self.tasks_list.set_items(self.store.items)
+
+		for w in self.tabs_map.values():
+			tab_index = self.tabs.indexOf(w)
+			self.tabs.setTabText(tab_index, w.get_name())
+
+
+
+	def show_edit_todo(self, id):
+		self.edit_todo_is_new = False
+		item = self.store.find_id(id)
+		self.__show_modal_edit_todo(item)
+
 
 
 	def show_add_todo(self):
-		self.modal_edit_todo = ModalEditTodo(self.on_save_todo, parent=self)
-		self.modal_edit_todo.show()
+		self.edit_todo_is_new = True
+		item = self.store.find_id(None)				# new instance
+		item.status = self.current_status_code
+		self.__show_modal_edit_todo(item)
 
+
+
+	def __show_modal_edit_todo(self, item):
+		data_dict = item.dump()
+		self.modal_edit_todo = ModalEditTodo(data_dict, self.on_save_todo, parent=self)
+		self.modal_edit_todo.show()
 
 
 	def on_save_todo(self, data_dict):
 
-		store = get_store()
-		store.add_item(data_dict)
-		store.save()
+		if self.edit_todo_is_new:
+			self.store.add_item(data_dict)
+		else:
+			self.store.update_item(data_dict)
+
+		self.store.save()
+
+		# store = get_store()
+		# store.add_item(data_dict)
+		# store.save()
 
 		self.modal_edit_todo.close()
 		self.modal_edit_todo = None
@@ -149,20 +209,31 @@ class MainWindow(QMainWindow):
 
 
 
+
+	def on_tab_changed(self, index):
+		"""переключение таба - сохраняем статус(для модала создания)"""
+		w = self.tabs.currentWidget()
+		self.current_status_code = w.status_code
+
+
+
 	def act_exit(self):
 		log.info("запрос на закрытие приложения")
-		self.close()
-
-
+		# self.close()
+		QApplication.instance().quit()
+		# self.quit()
 
 	def closeEvent(self, QCloseEvent):
 		"""перехват зактытия окна - предварительные завершения для объектов"""
 
-		log.info("закрытие приложения - останавливаем процессы")
+		self.hide()
+		QCloseEvent.ignore()
 
-
-		log.info("закрытие приложения - выходим")
-		QCloseEvent.accept()
+		# log.info("закрытие приложения - останавливаем процессы")
+		#
+		#
+		# log.info("закрытие приложения - выходим")
+		# QCloseEvent.accept()
 
 
 

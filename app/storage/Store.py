@@ -14,13 +14,39 @@ class Store(object):
 
 
 	def add_item(self, data_dict):
+		print("add item")
+		item = Item()
 		for key, value in data_dict.items():
-			item = Item()
-			item.gen_id()
 			if hasattr(item, key):
 				setattr(item, key, value)
 
-			self.items.append(item)
+		item.gen_id()
+		item.create_timestamps()
+		self.items.append(item)
+
+
+	def update_item(self, data_dict):
+		# print(data_dict)
+		item = self.find_id(data_dict["id"])
+		# print(item.text)
+		for key, value in data_dict.items():
+			if hasattr(item, key):
+				setattr(item, key, value)
+
+		item.update_timestamps()
+
+
+
+
+
+	def find_id(self, id):
+		result = [item for item in self.items if item.id == id]
+		return result[0] if len(result) > 0 else Item()
+
+
+
+
+
 
 
 
