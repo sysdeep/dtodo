@@ -4,7 +4,9 @@
 from PyQt5.QtWidgets import QLabel, QDialog, QPushButton, QHBoxLayout, QVBoxLayout, \
 	QGridLayout, QGroupBox, QTabWidget, QWidget, QScrollArea, QFormLayout, QLineEdit, QComboBox, QTextEdit
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QIcon
+
+from app.rc import get_icon
 
 
 from app.data import TODO_STATUSES, TODO_PRIORITYES
@@ -72,11 +74,13 @@ class ModalEditTodo(QDialog):
 		self.main_layout.addLayout(controls)
 
 
-		btn_close = QPushButton("close")
+		btn_close = QPushButton("Закрыть")
+		btn_close.setIcon(QIcon(get_icon("delete.png")))
 		btn_close.clicked.connect(self.close)
 
 
-		btn_save = QPushButton("save")
+		btn_save = QPushButton("Сохранить")
+		btn_save.setIcon(QIcon(get_icon("save.png")))
 		btn_save.clicked.connect(self.save)
 
 

@@ -23,6 +23,7 @@ from .TasksList import TaskList
 from .TasksControls import TaskControls
 from .ModalEditTodo import ModalEditTodo
 from .SystemTray import SystemTray
+from .BarMenu import BarMenu
 
 from ..storage import get_store
 from ..rc import get_media, get_icon, get_status_icon
@@ -55,7 +56,7 @@ class MainWindow(QMainWindow):
 		# self.startup_size = def_ui.STUPTUP_SIZE_NORMAL
 
 
-		self.bar_menu	= None			# меню
+		self.bar_menu	= BarMenu(parent=self)			# меню
 
 
 		#--- add fonts
