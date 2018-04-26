@@ -36,6 +36,10 @@ class Store(object):
 		item.update_timestamps()
 
 
+	def remove_item(self, item_id):
+		print("remove item: " + item_id)
+		item = self.find_id(item_id)
+		self.items.remove(item)
 
 
 

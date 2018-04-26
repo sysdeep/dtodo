@@ -117,6 +117,7 @@ class MainWindow(QMainWindow):
 			todo_list = TaskList()
 			self.tabs_map[st] = todo_list
 			todo_list.eedit.connect(self.show_edit_todo)
+			todo_list.eremove.connect(self.show_remove_todo)
 			todo_list.status_code = st
 			todo_list.status_text = data.TODO_STATUSES[st]
 			self.tabs.addTab(todo_list, todo_list.get_name())
@@ -164,6 +165,29 @@ class MainWindow(QMainWindow):
 		for w in self.tabs_map.values():
 			tab_index = self.tabs.indexOf(w)
 			self.tabs.setTabText(tab_index, w.get_name())
+
+
+
+
+
+	def show_remove_todo(self, item_id):
+		msg = QMessageBox()
+		msg.setIcon(QMessageBox.Question)
+		msg.setWindowTitle("Подтверждение удаления")
+		msg.setText("Вы действительно хотите удалить элемент?")
+		# msg.setInformativeText(message)
+		msg.addButton("Удалить", QMessageBox.AcceptRole)
+		msg.addButton("Отмена", QMessageBox.RejectRole)
+
+		result = msg.exec_()
+
+		if result == QMessageBox.AcceptRole:
+			self.store.remove_item(item_id)
+			self.store.save()
+			self.set_todo_items()
+		else:
+			print("reject")
+
 
 
 

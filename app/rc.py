@@ -16,3 +16,6 @@ DB_PATH		= os.path.join(DIR_BASE, DB_NAME)
 
 def get_media(*subpath):
 	return os.path.join(DIR_MEDIA, *subpath)
+
+def get_priority_icon(priority_code):
+	return get_media("icons_priority", str(priority_code) + ".png")
