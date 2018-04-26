@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QLabel, QDialog, QPushButton, QHBoxLayout, QVBoxLayo
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QIcon
 
-from app.rc import get_icon
+from app.rc import get_icon, get_priority_icon, get_status_icon
 
 
 from app.data import TODO_STATUSES, TODO_PRIORITYES
@@ -56,7 +56,11 @@ class ModalEditTodo(QDialog):
 			self.st_int.append(st)
 			self.st_str.append(TODO_STATUSES[st])
 
-		self.edit_statuses.addItems(self.st_str)
+		# self.edit_statuses.addItems(self.st_str)
+		for index, item in enumerate(self.st_str):
+			icon_name = self.st_int[index]
+			icon = QIcon(get_status_icon(icon_name))
+			self.edit_statuses.addItem(icon, item)
 
 
 		self.pr_int = []
@@ -66,8 +70,11 @@ class ModalEditTodo(QDialog):
 			self.pr_int.append(pr)
 			self.pr_str.append(TODO_PRIORITYES[pr])
 
-		self.edit_priority.addItems(self.pr_str)
 
+		for index, item in enumerate(self.pr_str):
+			icon_name = self.pr_int[index]
+			icon = QIcon(get_priority_icon(icon_name))
+			self.edit_priority.addItem(icon, item)
 
 
 		controls = QHBoxLayout()

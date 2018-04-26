@@ -37,6 +37,8 @@ log = logging.getLogger("main")
 
 
 class MainWindow(QMainWindow):
+	bus = pyqtSignal(str)
+
 	def __init__(self):
 		super(MainWindow, self).__init__()
 
@@ -133,8 +135,12 @@ class MainWindow(QMainWindow):
 		controls = QHBoxLayout()
 		self.main_layout.addLayout(controls)
 
-		btn_quit = QPushButton("Скрыть")
-		btn_quit.setIcon(QIcon(get_icon("close_hide.png")))
+		btn_hide = QPushButton("Скрыть")
+		btn_hide.setIcon(QIcon(get_icon("close_hide.png")))
+		btn_hide.clicked.connect(self.act_hide)
+
+		btn_quit = QPushButton("Закрыть")
+		btn_quit.setIcon(QIcon(get_icon("delete.png")))
 		btn_quit.clicked.connect(self.act_exit)
 
 		btn_add = QPushButton("Новая")
@@ -151,14 +157,16 @@ class MainWindow(QMainWindow):
 		# controls.addWidget(btn_add_new_todo)
 		controls.addStretch()
 		controls.addWidget(btn_add)
+		controls.addWidget(btn_hide)
 		controls.addWidget(btn_quit)
 
 
 		#--- status bar
 		# self.statusBar().showMessage('')
 
-		self.show()
+		# self.show()
 
+		self.act_show()
 
 	# def init_central_gui(self):
 	# 	#--- mnemo bar
@@ -246,6 +254,22 @@ class MainWindow(QMainWindow):
 
 		self.set_todo_items()
 
+
+
+
+
+	def act_hide(self):
+		"""скрыть главное окно"""
+
+		self.hide()
+		self.bus.emit("hidden")
+
+
+	def act_show(self):
+		"""отобразить главное окно"""
+
+		self.show()
+		self.bus.emit("showed")
 
 
 

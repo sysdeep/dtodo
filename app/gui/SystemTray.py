@@ -62,19 +62,39 @@ class SystemTray(QSystemTrayIcon):
 		#--- подписываемся на события системного трея
 		# events.on("show_tray_message", self.show_message)
 
+
+
+		self.parent.bus.connect(self.__on_bus_message)
+
 		self.update_menu()
+
+
+
+
+	def __on_bus_message(self, message):
+		"""прослушка событий от главного окна"""
+
+		if message == "hidden":
+			self.is_hidden = True
+			self.update_menu()
+		elif message == "showed":
+			self.is_hidden = False
+			self.update_menu()
+		else:
+			pass
+
 
 
 
 	def show_window(self):
-		self.parent.show()
-		self.is_hidden = False
-		self.update_menu()
+		self.parent.act_show()
+		# self.is_hidden = False
+		# self.update_menu()
 
 	def hide_window(self):
-		self.parent.hide()
-		self.is_hidden = True
-		self.update_menu()
+		self.parent.act_hide()
+		# self.is_hidden = True
+		# self.update_menu()
 
 
 

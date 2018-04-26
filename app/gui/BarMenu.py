@@ -141,7 +141,7 @@ class BarMenu(object):
 		# hide_action.setShortcut("Ctrl+Q")
 		hide_action.setStatusTip("Скрыть приложение")
 		hide_action.setIcon(QIcon(get_icon("close_hide.png")))
-		hide_action.triggered.connect(self.parent.hide)
+		hide_action.triggered.connect(self.hide_window)
 		file_menu.addAction(hide_action)
 
 		file_menu.addSeparator()
@@ -189,116 +189,7 @@ class BarMenu(object):
 	#
 	#
 	#
-	#
-	# def __create_system_menu(self):
-	# 	"""Система"""
-	#
-	# 	system_menu = self.menu.addMenu("Система")
-	#
-	#
-	# 	#--- log
-	# 	system_menu_ulog = QAction("Журнал", self.parent)
-	# 	system_menu_ulog.setIcon(qficon("document-properties.png"))
-	# 	system_menu_ulog.setShortcut("Ctrl+l")
-	# 	system_menu_ulog.triggered.connect(lambda: gbus.emit(gbus.SHOW_ULOG))
-	# 	system_menu.addAction(system_menu_ulog)
-	#
-	#
-	#
-	# 	#--- project packages
-	# 	system_menu_project_packages = QAction("Монитор входящих пакетов", self.parent)
-	# 	system_menu_project_packages.setIcon(qficon("mail-send-receive.png"))
-	# 	system_menu_project_packages.triggered.connect(lambda: gbus.emit(gbus.SHOW_PROJECT_PACKAGES))
-	# 	system_menu.addAction(system_menu_project_packages)
-	#
-	#
-	#
-	#
-	# 	#--- user roles
-	# 	system_menu_user_roles = QAction("Изменение прав доступа", self.parent)
-	# 	system_menu_user_roles.triggered.connect(lambda: gbus.emit(gbus.SHOW_USER_ROLES))
-	# 	system_menu_user_roles.setIcon(qficon("podcast-new.png"))
-	# 	system_menu.addAction(system_menu_user_roles)
-	# 	self.set_perm(system_menu_user_roles, admin=True, guest=False, operator=False)
-	#
-	#
-	# 	system_menu.addSeparator()
-	#
-	# 	#--- calibration line 1
-	# 	system_menu_test_flags_line1 = QAction("Тестирование координат флажков", self.parent)
-	# 	system_menu_test_flags_line1.triggered.connect(self.__start_modal_test_flags_line1)
-	# 	system_menu_test_flags_line1.setIcon(qficon("go-last.png"))
-	# 	system_menu.addAction(system_menu_test_flags_line1)
-	# 	self.set_perm(system_menu_test_flags_line1, admin=True, guest=False, operator=False)
-	#
-	# 	#--- открытие сервиса логирование comlog
-	# 	action_open_ext_comlogs = QAction("Сервис логирования КОМКОН", self.parent)
-	# 	action_open_ext_comlogs.triggered.connect(self.__open_comlog_browser)
-	# 	action_open_ext_comlogs.setIcon(qficon("call-start.png"))
-	# 	system_menu.addAction(action_open_ext_comlogs)
-	# 	self.set_perm(action_open_ext_comlogs, admin=True, guest=False, operator=False)
-	#
-	#
-	# 	system_menu.addSeparator()
-	#
-	# 	#--- console
-	# 	system_menu_console = QAction("Console", self.parent)
-	# 	system_menu_console.setShortcut("Ctrl+`")
-	# 	system_menu_console.setIcon(qficon("system-lock-screen.png"))
-	# 	system_menu_console.setStatusTip("Открыть окно консоли")
-	# 	system_menu_console.triggered.connect(lambda: gbus.emit(gbus.SHOW_CONSOLE))
-	# 	system_menu.addAction(system_menu_console)
-	# 	self.set_perm(system_menu_console, admin=True, guest=False, operator=False)
-	#
-	#
-	#
-	#
-	#
-	#
-	#
-	#
-	#
-	# def __create_debug_menu(self):
-	# 	"""Debug"""
-	#
-	#
-	# 	debug_menu = self.menu.addMenu("Debug")
-	#
-	# 	#--- update project.json
-	# 	get_project = QAction("Обновить project.json", self.parent)
-	# 	get_project.setIcon(qficon("go-bottom.png"))
-	# 	get_project.triggered.connect(self.__on_update_project_json)
-	# 	debug_menu.addAction(get_project)
-	#
-	# 	#--- scale +
-	# 	# scale_plus = QAction("Увеличить масштаб", self.parent)
-	# 	# scale_plus.setIcon(qficon("zoom-in.png"))
-	# 	# scale_plus.triggered.connect(lambda: menu_events.scene_scale_plus())
-	# 	# debug_menu.addAction(scale_plus)
-	#
-	# 	#--- scale -
-	# 	# scale_minus = QAction("Уменьшить масштаб", self.parent)
-	# 	# scale_minus.setIcon(qficon("zoom-out.png"))
-	# 	# scale_minus.triggered.connect(lambda: menu_events.scene_scale_minus())
-	# 	# debug_menu.addAction(scale_minus)
-	#
-	# 	#--- reload server
-	# 	debug_reload_server = QAction("Reload server", self.parent)
-	# 	debug_reload_server.triggered.connect(self.__on_reload_server)
-	# 	debug_reload_server.setIcon(qficon("document-open-recent.png"))
-	# 	debug_reload_server.setToolTip("Рестарт сервера")
-	# 	debug_menu.addAction(debug_reload_server)
-	#
-	#
-	# 	debug_menu.addSeparator()
-	#
-	# 	#--- faenza icons
-	# 	debug_faenza = QAction("Иконки Faenza", self.parent)
-	# 	debug_faenza.setIcon(qficon("image-bmp.png"))
-	# 	debug_faenza.triggered.connect(lambda: gbus.emit(gbus.SHOW_DEV_ICONS))
-	# 	debug_menu.addAction(debug_faenza)
-	#
-	#
+
 	#
 	#
 	#
@@ -346,7 +237,10 @@ class BarMenu(object):
 	#
 	#
 	#
-	# #--- actions --------------------------------------------------------------
+	#--- actions --------------------------------------------------------------
+
+	def hide_window(self):
+		self.parent.act_hide()
 	#
 	#
 	# def __act_logout(self):
@@ -396,4 +290,4 @@ class BarMenu(object):
 	# 	"""отобразить окно браузера с сервисом логирования"""
 	# 	gbus.emit(gbus.SHOW_COMLOG_BROWSER)
 	#
-	# #--- actions --------------------------------------------------------------
+	#--- actions --------------------------------------------------------------

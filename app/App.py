@@ -28,7 +28,8 @@ from PyQt5.QtWidgets import QApplication
 
 from .gui.MainWindow import MainWindow
 from .storage import get_store
-from .rc import DB_PATH
+from .rc import get_db_path
+from .setup import check_home
 
 
 log = logging.getLogger("main")
@@ -40,13 +41,13 @@ class App(object):
 	def __init__(self):
 		log.info("инициализация приложения")
 
+		#--- проверка необходимых каталогов
+		check_home()
 
+		#--- загружаем данные
 		store = get_store()
-		store.open(DB_PATH)
+		store.open(get_db_path())
 
-
-		# write_storage(DB_PATH)
-		# load_storage(DB_PATH)
 
 		# QApplication.setDesktopSettingsAware(False)
 
