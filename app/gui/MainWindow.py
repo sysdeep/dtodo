@@ -4,7 +4,7 @@
 import logging
 from queue import Queue
 
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QStyleFactory, QWidget, QHBoxLayout, QPushButton, QVBoxLayout, QTabWidget
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QStyleFactory, QWidget, QHBoxLayout, QPushButton, QVBoxLayout, QTabWidget, QLineEdit
 from PyQt5.QtGui import QIcon, QFontDatabase
 from PyQt5.QtCore import QTimer, pyqtSignal
 
@@ -25,7 +25,7 @@ from .ModalEditTodo import ModalEditTodo
 from .SystemTray import SystemTray
 
 from ..storage import get_store
-from ..rc import get_media
+from ..rc import get_media, get_icon, get_status_icon
 from .. import data
 
 log = logging.getLogger("main")
@@ -113,6 +113,7 @@ class MainWindow(QMainWindow):
 		self.tabs.currentChanged.connect(self.on_tab_changed)
 		self.main_layout.addWidget(self.tabs)
 
+		index = 0
 		for st in sorted(data.TODO_STATUSES.keys()):
 			todo_list = TaskList()
 			self.tabs_map[st] = todo_list
@@ -121,18 +122,32 @@ class MainWindow(QMainWindow):
 			todo_list.status_code = st
 			todo_list.status_text = data.TODO_STATUSES[st]
 			self.tabs.addTab(todo_list, todo_list.get_name())
+			self.tabs.setTabIcon(index, QIcon(get_status_icon(st)))
+			index += 1
 
+
+		# for tab_item in self.tabs.i
 
 
 		controls = QHBoxLayout()
 		self.main_layout.addLayout(controls)
 
-		btn_quit = QPushButton("quit")
+		btn_quit = QPushButton("Скрыть")
+		btn_quit.setIcon(QIcon(get_icon("close_hide.png")))
 		btn_quit.clicked.connect(self.act_exit)
 
-		btn_add = QPushButton("Add")
+		btn_add = QPushButton("Новая")
+		btn_add.setIcon(QIcon(get_icon("add.png")))
 		btn_add.clicked.connect(self.show_add_todo)
 
+
+
+		# edit_new_todo = QLineEdit()
+		# btn_add_new_todo = QPushButton("add")
+		#
+		#
+		# controls.addWidget(edit_new_todo)
+		# controls.addWidget(btn_add_new_todo)
 		controls.addStretch()
 		controls.addWidget(btn_add)
 		controls.addWidget(btn_quit)

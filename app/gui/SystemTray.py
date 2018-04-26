@@ -13,6 +13,8 @@ from PyQt5.QtCore import pyqtSignal
 
 # from .. import events
 
+from app.rc import get_icon
+
 class SystemTray(QSystemTrayIcon):
 	# ebus = pyqtSignal(str)
 	def __init__(self, icon, parent):
@@ -26,6 +28,7 @@ class SystemTray(QSystemTrayIcon):
 		self.setContextMenu(self.menu)
 		self.is_messages_support = self.supportsMessages()
 		self.delay 	= 5000		# время отображения всплывающего сообщения ms
+		self.is_hidden = False
 
 		#--- статусы иконок
 		self.statuses = {
@@ -37,25 +40,50 @@ class SystemTray(QSystemTrayIcon):
 
 
 		#--- act_exit menu
-		hide_action = self.menu.addAction("Скрыть")
-		# hide_action.setIcon(qficon("system-shutdown-restart-panel.png"))
-		hide_action.triggered.connect(self.parent.hide)
+		self.hide_action = self.menu.addAction("Скрыть")
+		self.hide_action.setIcon(QIcon(get_icon("close_hide.png")))
+		self.hide_action.triggered.connect(self.hide_window)
 
 
-		show_action = self.menu.addAction("Отобразить")
-		# show_action.setIcon(qficon("system-shutdown-restart-panel.png"))
-		show_action.triggered.connect(self.parent.show)
+		self.show_action = self.menu.addAction("Отобразить")
+		self.show_action.setIcon(QIcon(get_icon("open_show.png")))
+		self.show_action.triggered.connect(self.show_window)
 
+
+		self.menu.addSeparator()
 
 		#--- act_exit menu
 		exit_action = self.menu.addAction("Закрыть")
-		# exit_action.setIcon(qficon("system-shutdown-restart-panel.png"))
+		exit_action.setIcon(QIcon(get_icon("delete.png")))
 		exit_action.triggered.connect(self.parent.act_exit)
 
 
 
 		#--- подписываемся на события системного трея
 		# events.on("show_tray_message", self.show_message)
+
+		self.update_menu()
+
+
+
+	def show_window(self):
+		self.parent.show()
+		self.is_hidden = False
+		self.update_menu()
+
+	def hide_window(self):
+		self.parent.hide()
+		self.is_hidden = True
+		self.update_menu()
+
+
+
+
+	def update_menu(self):
+
+		self.show_action.setEnabled(self.is_hidden)
+		self.hide_action.setDisabled(self.is_hidden)
+
 
 
 	#

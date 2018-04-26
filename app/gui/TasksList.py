@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QLabel, QGridLayout, QWidget, QHBoxLayout, QListWidg
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, pyqtSignal
 
-from app.rc import get_priority_icon
+from app.rc import get_priority_icon, get_icon
 
 class TaskList(QWidget):
 	eedit = pyqtSignal(str)
@@ -37,7 +37,10 @@ class TaskList(QWidget):
 		"""контекстное меню"""
 		self.list.setContextMenuPolicy(Qt.ActionsContextMenu)
 		edit 	= QAction("Изменить", self.list)
+		edit.setIcon(QIcon(get_icon("edit.png")))
+
 		remove 	= QAction("Удалить", self.list)
+		remove.setIcon(QIcon(get_icon("delete.png")))
 		# create_new_parent 	= QAction("Новая запись для данного элемента", self)
 		# create_new_level 	= QAction("Новая запись такого же уровня", self)
 		#
@@ -52,8 +55,8 @@ class TaskList(QWidget):
 		#
 		# remove_item 		= QAction("Удалить запись(ветку)", self)
 		#
-		# separator1 = QAction(self)
-		# separator1.setSeparator(True)
+		separator1 = QAction(self)
+		separator1.setSeparator(True)
 		#
 		# separator2 = QAction(self)
 		# separator2.setSeparator(True)
@@ -62,6 +65,7 @@ class TaskList(QWidget):
 		# separator3.setSeparator(True)
 
 		self.list.addAction(edit)
+		self.list.addAction(separator1)
 		self.list.addAction(remove)
 		# self.addAction(create_new_parent)
 		# self.addAction(create_new_level)

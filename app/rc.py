@@ -19,3 +19,10 @@ def get_media(*subpath):
 
 def get_priority_icon(priority_code):
 	return get_media("icons_priority", str(priority_code) + ".png")
+
+def get_status_icon(status_code):
+	return get_media("icons_status", str(status_code) + ".png")
+
+
+def get_icon(full_name):
+	return get_media("icons", full_name)
