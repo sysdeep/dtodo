@@ -313,7 +313,7 @@ class MainWindow(QMainWindow):
 	def closeEvent(self, QCloseEvent):
 		"""перехват зактытия окна - предварительные завершения для объектов"""
 
-		self.hide()
+		self.act_hide()
 		QCloseEvent.ignore()
 
 		# log.info("закрытие приложения - останавливаем процессы")
