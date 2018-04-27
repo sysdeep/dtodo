@@ -111,6 +111,8 @@ class MainWindow(QMainWindow):
 			self.tabs_map[st] = todo_list
 			todo_list.eedit.connect(self.show_edit_todo)
 			todo_list.eremove.connect(self.show_remove_todo)
+			todo_list.estatus.connect(self.change_todo_status)
+			todo_list.epriority.connect(self.change_todo_priority)
 			todo_list.status_code = st
 			todo_list.status_text = data.TODO_STATUSES[st]
 			self.tabs.addTab(todo_list, todo_list.get_name())
@@ -201,6 +203,30 @@ class MainWindow(QMainWindow):
 		else:
 			print("reject")
 
+
+
+	def change_todo_status(self, tid, status_code):
+		data_dict = {
+			"id"		: tid,
+			"status"	: status_code
+		}
+
+		self.store.update_item(data_dict)
+		self.store.save()
+
+		self.set_todo_items()
+
+
+	def change_todo_priority(self, tid, priority_code):
+		data_dict = {
+			"id"		: tid,
+			"priority"	: priority_code
+		}
+
+		self.store.update_item(data_dict)
+		self.store.save()
+
+		self.set_todo_items()
 
 
 

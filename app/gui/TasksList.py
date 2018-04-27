@@ -5,11 +5,14 @@ from PyQt5.QtWidgets import QLabel, QGridLayout, QWidget, QHBoxLayout, QListWidg
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, pyqtSignal
 
-from app.rc import get_priority_icon, get_icon
+from app.rc import get_priority_icon, get_icon, get_status_icon
+from app.data import TODO_STATUSES, TODO_PRIORITYES
 
 class TaskList(QWidget):
 	eedit = pyqtSignal(str)
 	eremove = pyqtSignal(str)
+	estatus = pyqtSignal(str, int)
+	epriority = pyqtSignal(str, int)
 	def __init__(self, parent=None):
 		super(TaskList, self).__init__(parent)
 
@@ -46,11 +49,36 @@ class TaskList(QWidget):
 
 		menu.addAction(edit)
 		menu.addSeparator()
-		menu.addAction(remove)
-		menu.addSeparator()
 
-		statuses 	= QMenu("Статусы")
+
+		statuses 	= QMenu("Изменить статус")
+		statuses.setIcon(QIcon(get_icon("edit.png")))
 		menu.addMenu(statuses)
+
+		for st_int in sorted(TODO_STATUSES.keys()):
+			st_str = TODO_STATUSES[st_int]
+			action = QAction(st_str, self)
+			action.setIcon(QIcon(get_status_icon(st_int)))
+			action.triggered.connect(lambda x, z=st_int: self.change_status(z))
+			statuses.addAction(action)
+
+
+
+		priority 	= QMenu("Изменить приоритет")
+		priority.setIcon(QIcon(get_icon("edit.png")))
+		menu.addMenu(priority)
+
+		for pr_int in sorted(TODO_PRIORITYES.keys()):
+			pr_str = TODO_PRIORITYES[pr_int]
+			action = QAction(pr_str, self)
+			action.setIcon(QIcon(get_priority_icon(pr_int)))
+			action.triggered.connect(lambda x, z=pr_int: self.change_priority(z))
+			priority.addAction(action)
+
+
+		menu.addSeparator()
+		menu.addAction(remove)
+
 
 		action = menu.exec_(event.globalPos())
 		# action = menu.exec_(event)
@@ -66,102 +94,13 @@ class TaskList(QWidget):
 
 
 
-	def __make_cmenu(self):
-		"""контекстное меню"""
-		self.list.setContextMenuPolicy(Qt.ActionsContextMenu)
-		edit 	= QAction("Изменить", self.list)
-		edit.setIcon(QIcon(get_icon("edit.png")))
-
-		remove 	= QAction("Удалить", self.list)
-		remove.setIcon(QIcon(get_icon("delete.png")))
-
-
-		# statuses 	= QMenu("Статусы", self.list)
-
-		# create_new_parent 	= QAction("Новая запись для данного элемента", self)
-		# create_new_level 	= QAction("Новая запись такого же уровня", self)
-		#
-		# edit_name 			= QAction("Изменить название", self)
-		# edit_icon 			= QAction("Изменить иконки", self)
-		# show_info 			= QAction("Информация", self)
-		# # act_copy 			= QAction("Копировать", self)
-		# # act_paste 			= QAction("Вставить", self)
-		#
-		# move_up				= QAction("Выше", self)
-		# move_down			= QAction("Ниже", self)
-		#
-		# remove_item 		= QAction("Удалить запись(ветку)", self)
-		#
-		separator1 = QAction(self)
-		separator1.setSeparator(True)
-		#
-		# separator2 = QAction(self)
-		# separator2.setSeparator(True)
-		#
-		# separator3 = QAction(self)
-		# separator3.setSeparator(True)
-
-		self.list.addAction(edit)
-		# self.list.addMenu(statuses)
-		self.list.addAction(separator1)
-		self.list.addAction(remove)
-		# self.addAction(create_new_parent)
-		# self.addAction(create_new_level)
-		# self.addAction(separator1)
-		# self.addAction(edit_name)
-		# self.addAction(edit_icon)
-		# self.addAction(show_info)
-		# # self.addAction(act_copy)
-		# # self.addAction(act_paste)
-		#
-		# self.addAction(separator2)
-		#
-		# self.addAction(move_up)
-		# self.addAction(move_down)
-		#
-		# self.addAction(separator3)
-		#
-		# self.addAction(remove_item)
-		# # self.addSeparetor()
-
-
-		# create_new_root.setIcon(qicon("filesystems", "folder_blue.png"))
-		# create_new_parent.setIcon(qicon("filesystems", "folder_green.png"))
-		# create_new_level.setIcon(qicon("filesystems", "folder_orange.png"))
-		# edit_name.setIcon(qicon("actions", "edit.png"))
-		# edit_icon.setIcon(qicon("actions", "frame_image.png"))
-		# show_info.setIcon(qicon("actions", "kdeprint_printer_infos.png"))
-		# # act_copy.setIcon(qicon("actions", "editcopy.png"))
-		# remove_item.setIcon(qicon("actions", "remove.png"))
-		#
-		# move_up.setIcon(qicon("actions", "arrow_up.png"))
-		# move_down.setIcon(qicon("actions", "arrow_down.png"))
-		#
-		# create_new_root.triggered.connect(self.__act_create_new_root)
-		# create_new_parent.triggered.connect(self.__act_create_new_parent)
-		# create_new_level.triggered.connect(self.__act_create_new_level)
-		# edit_name.triggered.connect(self.__act_edit_name)
-		# edit_icon.triggered.connect(self.__act_edit_icon)
-		# show_info.triggered.connect(self.__act_show_info)
-		# act_copy.triggered.connect(self.__act_copy)
-		# act_paste.triggered.connect(self.__act_paste)
-
-		# move_up.triggered.connect(self.__act_move_up)
-		# move_down.triggered.connect(self.__act_move_down)
-
-		edit.triggered.connect(lambda x: self.show_edit())
-		remove.triggered.connect(lambda x: self.show_remove())
-
-
-
-
-
 	def get_name(self):
 		return "{} [{}]".format(self.status_text, self.items_count)
 
 
 	def clear_list(self):
 		self.items_count = 0
+		self.current_item_id = None
 		self.list.clear()
 
 
@@ -203,8 +142,52 @@ class TaskList(QWidget):
 
 
 	def show_edit(self):
-		self.eedit.emit(self.current_item_id)
+		if self.current_item_id:
+			self.eedit.emit(self.current_item_id)
 
 
 	def show_remove(self):
-		self.eremove.emit(self.current_item_id)
+		if self.current_item_id:
+			self.eremove.emit(self.current_item_id)
+
+
+	def change_status(self, status_code):
+		if self.current_item_id:
+			self.estatus.emit(self.current_item_id, status_code)
+
+
+	def change_priority(self, p_code):
+		if self.current_item_id:
+			self.epriority.emit(self.current_item_id, p_code)
+
+
+
+
+
+
+
+
+
+
+
+#--- old cmenu ----------------------------------------------------------------
+	# def __make_cmenu(self):
+	# 	"""контекстное меню"""
+	# 	self.list.setContextMenuPolicy(Qt.ActionsContextMenu)
+	# 	edit 	= QAction("Изменить", self.list)
+	# 	edit.setIcon(QIcon(get_icon("edit.png")))
+	#
+	# 	remove 	= QAction("Удалить", self.list)
+	# 	remove.setIcon(QIcon(get_icon("delete.png")))
+	#
+	# 	separator1 = QAction(self)
+	# 	separator1.setSeparator(True)
+	#
+	# 	self.list.addAction(edit)
+	# 	self.list.addAction(separator1)
+	# 	self.list.addAction(remove)
+	#
+	#
+	# 	edit.triggered.connect(lambda x: self.show_edit())
+	# 	remove.triggered.connect(lambda x: self.show_remove())
+#--- old cmenu ----------------------------------------------------------------

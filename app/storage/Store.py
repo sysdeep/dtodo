@@ -26,8 +26,12 @@ class Store(object):
 
 
 	def update_item(self, data_dict):
-		# print(data_dict)
-		item = self.find_id(data_dict["id"])
+		tid = data_dict.get("id")
+		if tid is None:
+			print("Error: update_item - no id in request")
+			return False
+
+		item = self.find_id(tid)
 		# print(item.text)
 		for key, value in data_dict.items():
 			if hasattr(item, key):
