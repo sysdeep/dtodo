@@ -4,6 +4,11 @@
 import sys
 import os.path
 
+VERSION		= "1.0.0"
+DESCRIPTION	= """Программа для ведения простого списка дел"""
+REPO_URL	= "https://github.com/sysdeep/dtodo"
+EMAIL		= "sysdeep@yandex.ru"
+
 DIR_SELF 	= os.path.dirname(os.path.abspath(__file__))
 DIR_BASE	= os.path.dirname(DIR_SELF)
 DIR_MEDIA	= os.path.join(DIR_SELF, "media")

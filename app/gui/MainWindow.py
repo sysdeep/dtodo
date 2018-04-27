@@ -11,6 +11,7 @@ from PyQt5.QtCore import QTimer, pyqtSignal
 
 from .TasksList import TaskList
 from .ModalEditTodo import ModalEditTodo
+from .ModalAbout import ModalAbout
 from .SystemTray import SystemTray
 from .BarMenu import BarMenu
 
@@ -130,11 +131,11 @@ class MainWindow(QMainWindow):
 		btn_hide.setIcon(QIcon(get_icon("close_hide.png")))
 		btn_hide.clicked.connect(self.act_hide)
 
-		btn_quit = QPushButton("Закрыть")
-		btn_quit.setIcon(QIcon(get_icon("delete.png")))
-		btn_quit.clicked.connect(self.act_exit)
+		# btn_quit = QPushButton("Закрыть")
+		# btn_quit.setIcon(QIcon(get_icon("delete.png")))
+		# btn_quit.clicked.connect(self.act_exit)
 
-		btn_add = QPushButton("Новая")
+		btn_add = QPushButton("Добавить")
 		btn_add.setIcon(QIcon(get_icon("add.png")))
 		btn_add.clicked.connect(self.show_add_todo)
 
@@ -149,7 +150,7 @@ class MainWindow(QMainWindow):
 		controls.addStretch()
 		controls.addWidget(btn_add)
 		controls.addWidget(btn_hide)
-		controls.addWidget(btn_quit)
+		# controls.addWidget(btn_quit)
 
 
 		#--- status bar
@@ -172,6 +173,8 @@ class MainWindow(QMainWindow):
 
 		for item in self.store.items:
 			st = item.status
+			if not st in self.tabs_map:
+				continue
 			w = self.tabs_map[st]
 			w.append_item(item)
 
@@ -269,6 +272,11 @@ class MainWindow(QMainWindow):
 
 		self.set_todo_items()
 
+
+
+
+	def show_modal_about(self):
+		ModalAbout(self).show()
 
 
 

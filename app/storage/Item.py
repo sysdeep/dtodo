@@ -48,9 +48,9 @@ class Item(object):
 
 
 	@staticmethod
-	def fdate(self, seconds):
+	def fdate(seconds):
 		ltime = time.localtime(seconds)
-		return ltime.strftime("%Y-%m-%d %H:%M:%S")
+		return time.strftime("%Y-%m-%d %H:%M:%S", ltime)
 
 
 	def create_timestamps(self):

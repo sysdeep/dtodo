@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtWidgets import QLabel, QGridLayout, QWidget, QHBoxLayout, QListWidget, QListWidgetItem, QVBoxLayout, QAction, QMenu
+from PyQt5.QtWidgets import QLabel, QGridLayout, QWidget, QHBoxLayout, QListWidget, QListWidgetItem, \
+	QVBoxLayout, QAction, QMenu, QTreeWidget, QTreeWidgetItem, QHeaderView
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, pyqtSignal
 
@@ -21,21 +22,39 @@ class TaskList(QWidget):
 		self.items_count = 0
 
 		self.main_layout = QVBoxLayout(self)
-		self.list = QListWidget()
-		self.list.itemDoubleClicked.connect(self.on_dbl_clicked)
-		# self.list.itemClicked.connect(self.on_select)
-		self.list.pressed.connect(self.on_select)
+		# self.list = QListWidget()
+		# self.list.itemDoubleClicked.connect(self.on_dbl_clicked)
+		# # self.list.itemClicked.connect(self.on_select)
+		# self.list.pressed.connect(self.on_select)
 
-		self.main_layout.addWidget(self.list)
+
+
+		self.tree = QTreeWidget()
+		self.tree.setHeaderHidden(True)
+		self.tree.setColumnCount(2)
+		self.tree.header().setStretchLastSection(False)
+		self.tree.header().setSectionResizeMode(0, QHeaderView.Stretch)
+		self.tree.setColumnWidth(1, 150)
+		self.tree.setRootIsDecorated(False)									# hide first margin
+		self.tree.doubleClicked.connect(self.on_dbl_clicked)
+		self.tree.pressed.connect(self.on_select)
+
+
+		# self.main_layout.addWidget(self.list)
+		self.main_layout.addWidget(self.tree)
 
 
 		self.current_item_id = ""
 
 		# self.__make_cmenu()
-		self.list.contextMenuEvent = self.show_cmenu
+		# self.list.contextMenuEvent = self.show_cmenu
+		self.tree.contextMenuEvent = self.show_cmenu
 
 
 	def show_cmenu(self, event):
+
+		if self.current_item_id is None:
+			return event.ignore()
 
 		menu = QMenu()
 
@@ -101,7 +120,9 @@ class TaskList(QWidget):
 	def clear_list(self):
 		self.items_count = 0
 		self.current_item_id = None
-		self.list.clear()
+
+		# self.list.clear()
+		self.tree.clear()
 
 
 	def append_item(self, item_obj):
@@ -121,11 +142,18 @@ class TaskList(QWidget):
 
 	def __append_item(self, item):
 		icon = QIcon(get_priority_icon(item.priority))
-		list_item = QListWidgetItem(item.text)
-		list_item.setIcon(icon)
-		list_item.setData(Qt.UserRole + 1, item.id)
-		self.list.addItem(list_item)
+		# list_item = QListWidgetItem(item.text)
+		# list_item.setIcon(icon)
+		# list_item.setData(Qt.UserRole + 1, item.id)
+		# self.list.addItem(list_item)
 
+
+
+		tree_item = QTreeWidgetItem([item.text, item.fdate(item.created)])
+		tree_item.setIcon(0, icon)
+		tree_item.setData(0, Qt.UserRole + 1, item.id)
+		tree_item.setData(1, Qt.UserRole + 1, item.id)
+		self.tree.addTopLevelItem(tree_item)
 
 
 

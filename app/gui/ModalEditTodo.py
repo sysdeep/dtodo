@@ -34,13 +34,13 @@ class ModalEditTodo(QDialog):
 
 
 		self.edit_text = QLineEdit()
-		self.form.addRow("text", self.edit_text)
+		self.form.addRow("текст", self.edit_text)
 
 		self.edit_statuses = QComboBox()
-		self.form.addRow("status", self.edit_statuses)
+		self.form.addRow("статус", self.edit_statuses)
 
 		self.edit_priority = QComboBox()
-		self.form.addRow("priority", self.edit_priority)
+		self.form.addRow("приоритет", self.edit_priority)
 
 
 
