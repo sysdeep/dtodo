@@ -4,7 +4,7 @@
 import logging
 
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QStyleFactory, QWidget, QHBoxLayout, QPushButton, QVBoxLayout, QTabWidget, QLineEdit
-from PyQt5.QtGui import QIcon, QFontDatabase
+from PyQt5.QtGui import QIcon, QFontDatabase, QFont
 from PyQt5.QtCore import QTimer, pyqtSignal
 
 
@@ -16,7 +16,7 @@ from .SystemTray import SystemTray
 from .BarMenu import BarMenu
 
 from ..storage import get_store
-from ..rc import get_media, get_icon, get_status_icon
+from ..rc import get_media, get_icon, get_status_icon, get_font_path
 from .. import data
 
 log = logging.getLogger("main")
@@ -55,6 +55,10 @@ class MainWindow(QMainWindow):
 		# QFontDatabase.addApplicationFont(get_font_path("Play-Bold.ttf"))
 		# QFontDatabase.addApplicationFont(get_font_path("roboto", "RobotoRegular.ttf"))
 		# QFontDatabase.addApplicationFont(get_font_path("roboto", "RobotoMono-Regular.ttf"))
+		QFontDatabase.addApplicationFont(get_font_path("ubuntu", "Ubuntu-R.ttf"))
+
+		app_font = QFont("ubuntu", 10)
+		QApplication.setFont(app_font)
 
 
 
@@ -158,7 +162,8 @@ class MainWindow(QMainWindow):
 
 		# self.show()
 
-		self.act_show()
+		# self.act_show()
+		self.act_hide()
 
 	# def init_central_gui(self):
 	# 	#--- mnemo bar

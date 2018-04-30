@@ -12,6 +12,7 @@ EMAIL		= "sysdeep@yandex.ru"
 DIR_SELF 	= os.path.dirname(os.path.abspath(__file__))
 DIR_BASE	= os.path.dirname(DIR_SELF)
 DIR_MEDIA	= os.path.join(DIR_SELF, "media")
+DIR_FONTS	= os.path.join(DIR_MEDIA, "fonts")
 
 
 DB_NAME		= "dtodo_db.json"
@@ -46,5 +47,6 @@ def get_home_path():
 def get_db_path():
 	return os.path.join(get_home_path(), DB_NAME)
 
-
+def get_font_path(*subpath):
+	return os.path.join(DIR_FONTS, *subpath)
 
